@@ -5,6 +5,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/core/core.hpp"
 #include <iostream>
+#include <algorithm>
+#include <iterator>
+#include <set>
 
 #define PI 3.14
 

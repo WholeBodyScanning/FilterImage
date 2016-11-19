@@ -24,6 +24,12 @@
     <ClCompile Include="LineDistribution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MaximaLocalMethod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Distribution.h">
@@ -32,5 +38,19 @@
     <ClInclude Include="LineDistribution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MaximaLocalMethod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameTimer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="logfile.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

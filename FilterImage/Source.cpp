@@ -5,9 +5,14 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "opencv2\features2d\features2d.hpp"
+#include <fstream>
 
 #include "Distribution.h"
 #include "LineDistribution.h"
+#include "MaximaLocalMethod.h"
+#include "Timer.h"
+#include "FrameTimer.h"
 
 cv::Mat src, src2, src3; 
 cv::Mat src_gray;
@@ -20,73 +25,127 @@ Distribution dist_class;
 void thresh_callback(int, void*);
 int main(int argc, char** argv){
 
-	
-	
-	src2 = cv::imread("template.bmp", 0);
-	/*cv::Mat sobel = dist_class.scharrMethod(src2);
-	cv::imwrite("sobel_temple.bmp",sobel);*/
-	cv::Mat image = cv::imread("template.bmp", 0);
 
-	cv::Mat dst;
-	cv::linearPolar(image, dst, cv::Point(image.cols / 2, image.rows / 2), image.rows / 2, cv::INTER_CUBIC);
-	cv::imshow("linear", dst);
+	std::wofstream logFile(L"logfile.txt");
+	FrameTimer ft;
+	MaximaLocalMethod local_maxima;
+	cv::Mat input_Grayimg = cv::imread("image_roi1.bmp", 0);
+    cv::Mat out_Grayimg;
 
-	cv::namedWindow("ctrl");
-	int win = 62;
-	int th = 2100;
-	cv::createTrackbar("win", "ctrl", &win, 500);
-	cv::createTrackbar("th", "ctrl", &th, 10000);
 	
-	while (true)
+	
+	// Setup SimpleBlobDetector parameters.
+	cv::SimpleBlobDetector::Params params;
+
+	// Change thresholds
+	params.minThreshold = 10;
+	params.maxThreshold = 200;
+
+	// Filter by Area.
+	params.filterByArea = true;
+	params.minArea = 50;
+
+	// Filter by Circularity
+	params.filterByCircularity = true;
+	params.minCircularity = 0.1;
+
+	// Filter by Convexity
+	params.filterByConvexity = true;
+	params.minConvexity = 0.5;
+
+	// Filter by Inertia
+	params.filterByInertia = true;
+	params.minInertiaRatio = 0.01;
+	// Set up the detector with default parameters.
+	cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
+	// Detect blobs.
+	std::vector<cv::KeyPoint> keypoints;
+
+	int k = 0;
+	cv::Mat im_with_keypoints;
+	while (k!=1000)
 	{
-		cv::Mat thresh;
-		image.copyTo(thresh);
-		/*cv::medianBlur(src2, thresh, 15);*/
-		adaptiveThreshold(thresh, thresh, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, win * 2 + 1, (th / 1000.));
-		imshow("thresh", thresh);
-		cv::imwrite("adaptive.bmp", thresh);
+		ft.StartFrame();
+		local_maxima.InvertGray255SSE(input_Grayimg, out_Grayimg);
+		/*cv::cvtColor(input_Grayimg, out_Grayimg, cv::COLOR_BGR2GRAY);
+		detector->detect(out_Grayimg, keypoints);
+		drawKeypoints(out_Grayimg, keypoints, im_with_keypoints, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);*/
+		ft.StopFrame(logFile);
+		cv::imshow("gray", out_Grayimg);
+	/*	cv::imshow("keypoint", im_with_keypoints);*/
 		cv::waitKey(10);
+		k++;
 	}
+	/*cv::imwrite("invertGray255_key.bmp", im_with_keypoints);*/
+	cv::imwrite("invertGray255.bmp", out_Grayimg);
+	// Previous work: before 11/19/2016
 
-	/*image.copyTo(src);
-	image.copyTo(src_gray);
-	float R1 = (float)src_gray.cols / 2 ;
-	float R2 = (float)src_gray.cols / 2 - 90 ;*/
-	/*blur(src_gray, src_gray, cv::Size(5, 5));*/
-	/*dist_class.ditributionGrayScale(src_gray, R1, R2);*/
-	/*dist_class.polarCoordinate(src_gray, R1, R2);*/
-
-	/*cv::imshow("original", image);*/
-
+#pragma region Previous
 	
-	/*while (true)
-	{
+	//src2 = cv::imread("template.bmp", 0);
+	///*cv::Mat sobel = dist_class.scharrMethod(src2);
+	//cv::imwrite("sobel_temple.bmp",sobel);*/
+	//cv::Mat image = cv::imread("template.bmp", 0);
 
-		cv::waitKey(10);
-	}*/
-	
-	//src = cv::imread("image_roi1.bmp", 1);
-	//src_gray = cv::imread("gray_scale.bmp", 0);
+	//cv::Mat dst;
+	//cv::linearPolar(image, dst, cv::Point(image.cols / 2, image.rows / 2), image.rows / 2, cv::INTER_CUBIC);
+	//cv::imshow("linear", dst);
+
+	//cv::namedWindow("ctrl");
+	//int win = 62;
+	//int th = 2100;
+	//cv::createTrackbar("win", "ctrl", &win, 500);
+	//cv::createTrackbar("th", "ctrl", &th, 10000);
+	//
+	//while (true)
+	//{
+	//	cv::Mat thresh;
+	//	image.copyTo(thresh);
+	//	/*cv::medianBlur(src2, thresh, 15);*/
+	//	adaptiveThreshold(thresh, thresh, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY_INV, win * 2 + 1, (th / 1000.));
+	//	imshow("thresh", thresh);
+	//	cv::imwrite("adaptive.bmp", thresh);
+	//	cv::waitKey(10);
+	//}
+
+	///*image.copyTo(src);
+	//image.copyTo(src_gray);
+	//float R1 = (float)src_gray.cols / 2 ;
+	//float R2 = (float)src_gray.cols / 2 - 90 ;*/
+	///*blur(src_gray, src_gray, cv::Size(5, 5));*/
+	///*dist_class.ditributionGrayScale(src_gray, R1, R2);*/
+	///*dist_class.polarCoordinate(src_gray, R1, R2);*/
+
+	///*cv::imshow("original", image);*/
+
+	//
+	///*while (true)
+	//{
+
+	//	cv::waitKey(10);
+	//}*/
+	//
+	////src = cv::imread("image_roi1.bmp", 1);
+	////src_gray = cv::imread("gray_scale.bmp", 0);
 
 
-	////cv::Mat sobel_img = dist_class.sobelMethod(src);
-	////cv::Mat scharr_img = dist_class.scharrMethod(src);
-	////cv::imwrite("sobel_img.bmp", sobel_img);
-	////cv::imwrite("scahrr_img.bmp", scharr_img);
+	//////cv::Mat sobel_img = dist_class.sobelMethod(src);
+	//////cv::Mat scharr_img = dist_class.scharrMethod(src);
+	//////cv::imwrite("sobel_img.bmp", sobel_img);
+	//////cv::imwrite("scahrr_img.bmp", scharr_img);
 
 
-	/*blur(src_gray, src_gray, cv::Size(5,5));
+	///*blur(src_gray, src_gray, cv::Size(5,5));
 
-	/// Create Window
-	char* source_window = "Source";
-	cv::namedWindow(source_window, CV_WINDOW_AUTOSIZE);
-	imshow(source_window, src);
+	///// Create Window
+	//char* source_window = "Source";
+	//cv::namedWindow(source_window, CV_WINDOW_AUTOSIZE);
+	//imshow(source_window, src);
 
-	cv::createTrackbar(" Canny thresh:", "Source", &thresh, max_thresh, thresh_callback);
-	thresh_callback(0, 0);*/
+	//cv::createTrackbar(" Canny thresh:", "Source", &thresh, max_thresh, thresh_callback);
+	//thresh_callback(0, 0);*/
 
-	
-	cv::waitKey(0);
+#pragma endregion ending previsous research
 	return 0;
 }
 
