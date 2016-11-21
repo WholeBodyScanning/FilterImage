@@ -39,12 +39,12 @@ void MaximaLocalMethod::InvertGray255SSE(cv::Mat & input_img, cv::Mat & output_i
 	uchar * Mo = (uchar*)cv::alignPtr(output_img.data,16);
 
 	const __m128i temple = _mm_set1_epi8(255);
-	const __m128i gamma = _mm_set1_epi8(50);
+	//const __m128i gamma = _mm_set1_epi8(50);
 	__m128i input_ptr, output_ptr;
 	for (unsigned int i = 0; i < input_img.cols*input_img.rows; i += 16) {
 		input_ptr =  _mm_load_si128((__m128i*)&Mi[i]);
 		output_ptr = _mm_subs_epi8(temple, input_ptr);
-		output_ptr = _mm_adds_epi8(gamma, output_ptr);
+		//output_ptr = _mm_adds_epi8(gamma, output_ptr);
 		_mm_store_si128((__m128i*)&Mo[i], output_ptr);
 	}
 

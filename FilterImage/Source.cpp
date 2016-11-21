@@ -32,52 +32,24 @@ int main(int argc, char** argv){
 	cv::Mat input_Grayimg = cv::imread("image_roi1.bmp", 0);
     cv::Mat out_Grayimg;
 
-	
-	
-	// Setup SimpleBlobDetector parameters.
-	cv::SimpleBlobDetector::Params params;
+	cv::Mat sobel_img = cv::imread("sobel_img.bmp", 0);
 
-	// Change thresholds
-	params.minThreshold = 10;
-	params.maxThreshold = 200;
-
-	// Filter by Area.
-	params.filterByArea = true;
-	params.minArea = 50;
-
-	// Filter by Circularity
-	params.filterByCircularity = true;
-	params.minCircularity = 0.1;
-
-	// Filter by Convexity
-	params.filterByConvexity = true;
-	params.minConvexity = 0.5;
-
-	// Filter by Inertia
-	params.filterByInertia = true;
-	params.minInertiaRatio = 0.01;
-	// Set up the detector with default parameters.
-	cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
-	// Detect blobs.
-	std::vector<cv::KeyPoint> keypoints;
-
+	cv::Mat result_img;
 	int k = 0;
-	cv::Mat im_with_keypoints;
+
 	while (k!=1000)
 	{
 		ft.StartFrame();
 		local_maxima.InvertGray255SSE(input_Grayimg, out_Grayimg);
-		/*cv::cvtColor(input_Grayimg, out_Grayimg, cv::COLOR_BGR2GRAY);
-		detector->detect(out_Grayimg, keypoints);
-		drawKeypoints(out_Grayimg, keypoints, im_with_keypoints, cv::Scalar(0, 0, 255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);*/
+		//cv::GaussianBlur(out_Grayimg, out_Grayimg,cv::Size(5,5),1,1);
+		result_img = out_Grayimg + sobel_img + sobel_img + sobel_img;
 		ft.StopFrame(logFile);
-		cv::imshow("gray", out_Grayimg);
+		cv::imshow("gray",result_img);
 	/*	cv::imshow("keypoint", im_with_keypoints);*/
 		cv::waitKey(10);
 		k++;
 	}
-	/*cv::imwrite("invertGray255_key.bmp", im_with_keypoints);*/
-	cv::imwrite("invertGray255.bmp", out_Grayimg);
+	cv::imwrite("invertGray255_Sobel_Adding_3.bmp",result_img);
 	// Previous work: before 11/19/2016
 
 #pragma region Previous
