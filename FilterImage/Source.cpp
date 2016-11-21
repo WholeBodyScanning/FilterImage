@@ -37,12 +37,16 @@ int main(int argc, char** argv){
 	cv::Mat result_img;
 	int k = 0;
 
+	// how about 
+	cv::Mat sobel_multiple;
+	int number_times = 3;
 	while (k!=1000)
 	{
 		ft.StartFrame();
 		local_maxima.InvertGray255SSE(input_Grayimg, out_Grayimg);
+		local_maxima.SobelMultipleLevelAdding(sobel_img, sobel_multiple, number_times);
 		//cv::GaussianBlur(out_Grayimg, out_Grayimg,cv::Size(5,5),1,1);
-		result_img = out_Grayimg + sobel_img + sobel_img + sobel_img;
+		result_img = out_Grayimg + sobel_multiple;
 		ft.StopFrame(logFile);
 		cv::imshow("gray",result_img);
 	/*	cv::imshow("keypoint", im_with_keypoints);*/

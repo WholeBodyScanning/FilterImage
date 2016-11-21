@@ -16,5 +16,6 @@ public:
 	void InvertGray255(cv::Mat &input_img, cv::Mat &output_img);
 	void InvertGray255SSE(cv::Mat &input_img, cv::Mat &output_img);
 	void InvertGray255AVX(cv::Mat &input_img, cv::Mat &output_img);
+	void SobelMultipleLevelAdding(cv::Mat &input_img,cv::Mat &output_ing, int &number_times);
 };
 
