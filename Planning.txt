@@ -1,1 +1,2 @@
 #1: Write accumulation function: intensity distribution 
+#2: Applying Equalization for image in gray scale
